@@ -26,7 +26,7 @@ env:
 
 jobs:
   check_tags:
-    runs-on: rp-home
+    runs-on: [self-hosted, Linux, ARM64]
     outputs:
       version_tag: ${{ steps.latest_tag.outputs.version }}
     steps:

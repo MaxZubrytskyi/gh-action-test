@@ -1,16 +1,8 @@
 ---
 name: Binary Builder & Uploader
 
-on:
-  schedule:
-    - cron: '0 8 * * *'  # Runs every day at 8 AM
-  workflow_dispatch:
-    inputs:
-      coin:
-        description: 'The coin to build'
-        required: false
-        default: 'all'
-        type: string
+on: [push, pull_request]
+
 
 jobs:
   generate-build-matrix:
