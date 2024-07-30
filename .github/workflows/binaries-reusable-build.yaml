@@ -1,0 +1,48 @@
+---
+name: Build and Push Binaries to S3
+
+on:
+  workflow_call:
+    inputs:
+      dockerfile_path:
+        description: 'The path to the Dockerfile'
+        required: true
+        type: string
+      aws_s3_bucket_folder:
+        description: 'The name of AWS S3 bucket folder to upload binaries to'
+        required: false
+        type: string
+      coin_repo_owner:
+        description: 'github repo owner'
+        required: true
+        type: string
+      coin_repo_name:
+        description: 'github repo name'
+        required: true
+        type: string
+
+env:
+  docker_image: "temp_image:latest"
+
+jobs:
+  check_tags:
+    runs-on: rp-home
+    outputs:
+      version_tag: ${{ steps.latest_tag.outputs.version }}
+      version_exist: ${{ steps.alredy_exist_on_s3_bucket.outputs.result }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      # Find a latest tag thats fits in repo
+      - name: Get latest tag
+        id: latest_tag
+        shell: bash
+        run: |-
+          echo "version=$(curl -sLX GET "https://api.github.com/repos/${{ inputs.coin_repo_owner }}/${{ inputs.coin_repo_name }}/releases/latest" | jq --raw-output '.tag_name')"  >> $GITHUB_OUTPUT
+
+      - name: Check scripts values
+        run: |
+          echo needed tag: "${{ steps.latest_tag.outputs.version }}"
+
+
