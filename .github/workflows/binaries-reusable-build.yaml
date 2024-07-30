@@ -29,12 +29,7 @@ jobs:
     runs-on: rp-home
     outputs:
       version_tag: ${{ steps.latest_tag.outputs.version }}
-      version_exist: ${{ steps.alredy_exist_on_s3_bucket.outputs.result }}
-    permissions:
-      id-token: write
-      contents: read
     steps:
-      # Find a latest tag thats fits in repo
       - name: Get latest tag
         id: latest_tag
         shell: bash
