@@ -1,45 +1,52 @@
----
 name: Binary Builder & Uploader
 
-on: [push, pull_request]
-
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      coin:
+        description: 'Coin to build (leave empty for all)'
+        required: false
+        default: ''
+      version:
+        description: 'Version to build (leave empty for latest)'
+        required: false
+        default: ''
 
 jobs:
   generate-build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          coins='[
+            {"name": "heimdall", "dockerfile_path": "binaries/heimdall-node/Dockerfile", "aws_s3_bucket_folder": "polygon/heimdall", "coin_repo_owner": "maticnetwork", "coin_repo_name": "heimdall"},
+            {"name": "bor", "dockerfile_path": "binaries/bor-node/Dockerfile", "aws_s3_bucket_folder": "polygon/bor", "coin_repo_owner": "maticnetwork", "coin_repo_name": "bor"},
+            {"name": "stride", "dockerfile_path": "binaries/stride-node/Dockerfile", "aws_s3_bucket_folder": "stride", "coin_repo_owner": "Stride-Labs", "coin_repo_name": "stride"},
+            {"name": "tzkt", "dockerfile_path": "binaries/tezos-indexer/Dockerfile", "aws_s3_bucket_folder": "tezos/bakingbad", "coin_repo_owner": "baking-bad", "coin_repo_name": "tzkt"},
+            {"name": "erigon", "dockerfile_path": "binaries/erigon-node/Dockerfile", "aws_s3_bucket_folder": "erigon", "coin_repo_owner": "ledgerwatch", "coin_repo_name": "erigon"}
+          ]'
+          
+          if [ -n "${{ github.event.inputs.coin }}" ]; then
+            coins=$(echo $coins | jq --arg coin "${{ github.event.inputs.coin }}" '[.[] | select(.name == $coin)]')
+          fi
+          
+          echo "matrix=$(echo $coins | jq -c .)" >> $GITHUB_OUTPUT
+
+  build-and-upload:
+    needs: generate-build-matrix
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: 'heimdall'
-            dockerfile_path: 'binaries/heimdall-node/Dockerfile'
-            aws_s3_bucket_name: 'ledger-infra-cdn'
-            aws_s3_bucket_folder: 'polygon/heimdall'
-            coin_repo_owner: 'maticnetwork'
-            coin_repo_name: 'heimdall'
-          - name: 'bor'
-            dockerfile_path: 'binaries/bor-node/Dockerfile'
-            aws_s3_bucket_folder: 'polygon/bor'
-            coin_repo_owner: 'maticnetwork'
-            coin_repo_name: 'bor'
-          - name: 'stride'
-            dockerfile_path: 'binaries/stride-node/Dockerfile'
-            aws_s3_bucket_folder: 'stride'
-            coin_repo_owner: 'Stride-Labs'
-            coin_repo_name: 'stride'
-          - name: 'tzkt'
-            dockerfile_path: 'binaries/tezos-indexer/Dockerfile'
-            aws_s3_bucket_folder: 'tezos/bakingbad'
-            coin_repo_owner: 'baking-bad'
-            coin_repo_name: 'tzkt'
-          - name: 'erigon'
-            dockerfile_path: 'binaries/erigon-node/Dockerfile'
-            aws_s3_bucket_folder: 'erigon'
-            coin_repo_owner: 'ledgerwatch'
-            coin_repo_name: 'erigon'
-    uses: MaxZubrytskyi/gh-action-test/.github/workflows/binaries-reusable-build.yaml@main  # Reusable workflow path
+        include: ${{fromJson(needs.generate-build-matrix.outputs.matrix)}}
+    uses: ./.github/workflows/binaries-reusable-build.yaml
     with:
       dockerfile_path: ${{ matrix.dockerfile_path }}
       aws_s3_bucket_folder: ${{ matrix.aws_s3_bucket_folder }}
       coin_repo_owner: ${{ matrix.coin_repo_owner }}
       coin_repo_name: ${{ matrix.coin_repo_name }}
+      version: ${{ github.event.inputs.version }}
     secrets: inherit
