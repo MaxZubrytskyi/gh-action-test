@@ -44,7 +44,7 @@ jobs:
             aws_s3_bucket_folder: 'erigon'
             coin_repo_owner: 'ledgerwatch'
             coin_repo_name: 'erigon'
-    uses: gh-action-test/.github/workflows/binaries-reusable-build.yaml@main  # Reusable workflow path
+    uses: MaxZubrytskyi/gh-action-test/.github/workflows/binaries-reusable-build.yaml@main  # Reusable workflow path
     with:
       dockerfile_path: ${{ matrix.dockerfile_path }}
       aws_s3_bucket_folder: ${{ matrix.aws_s3_bucket_folder }}
