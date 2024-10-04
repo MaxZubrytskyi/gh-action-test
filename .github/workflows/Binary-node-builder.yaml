@@ -1,5 +1,8 @@
 name: Binary Builder & Uploader
 
+
+on: workflow_dispatch
+
 #on:
 #  push:
 #  pull_request:
