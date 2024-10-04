@@ -1,25 +1,12 @@
-name: "Release: Schedule"
-
-concurrency:
-  group: container-release
-  cancel-in-progress: false
-
+name: Print Current Time
 
 on:
   schedule:
-    - cron: "*/1 * * * *"
-
-#on:
-#  schedule:
-#    - cron: '*/1 * * * *'  # Runs every 10 minutes
-#  workflow_dispatch: {}
+    - cron: "*/1 * * * *"  # Runs every minute
 
 jobs:
-  test:
+  print-time:
     runs-on: ubuntu-latest
     steps:
-      - name: date test
-        shell: bash
-        run: |
-          date=$(date)
-          echo "test $date"
+      - name: Print current time
+        run: echo "The current time is $(date)"
