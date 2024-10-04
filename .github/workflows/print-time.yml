@@ -1,9 +1,8 @@
 name: Print Current Time22
 
 on:
-  # Run every day at 8 AM
-  schedule: 
-    - cron: "*/5 * * * *"
+#  schedule: 
+#    - cron: "*/5 * * * *"
   workflow_dispatch: {}
 
 jobs:
