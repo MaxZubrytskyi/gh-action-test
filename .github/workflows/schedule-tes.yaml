@@ -4,10 +4,15 @@ concurrency:
   group: container-release
   cancel-in-progress: false
 
+
 on:
   schedule:
-    - cron: '*/1 * * * *'  # Runs every 10 minutes
-  workflow_dispatch: {}
+    - cron: "*/1 * * * *"
+
+#on:
+#  schedule:
+#    - cron: '*/1 * * * *'  # Runs every 10 minutes
+#  workflow_dispatch: {}
 
 jobs:
   test:
