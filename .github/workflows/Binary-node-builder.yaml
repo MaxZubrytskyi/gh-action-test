@@ -1,18 +1,18 @@
 name: Binary Builder & Uploader
 
-on:
-  push:
-  pull_request:
-  workflow_dispatch:
-    inputs:
-      coin:
-        description: 'Coin to build (leave empty for all) (ex: bor)'
-        required: false
-        default: ''
-      version:
-        description: 'Version to build (leave empty for latest) (ex: v1.3.2)'
-        required: false
-        default: ''
+#on:
+#  push:
+#  pull_request:
+#  workflow_dispatch:
+#    inputs:
+#      coin:
+#        description: 'Coin to build (leave empty for all) (ex: bor)'
+#        required: false
+#        default: ''
+#      version:
+#        description: 'Version to build (leave empty for latest) (ex: v1.3.2)'
+#        required: false
+#        default: ''
 
 jobs:
   generate-build-matrix:
