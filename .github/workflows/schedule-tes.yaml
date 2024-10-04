@@ -1,0 +1,22 @@
+---
+name: "Release: Schedule"
+
+concurrency:
+  group: container-release
+  cancel-in-progress: false
+
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Runs every day at 8 AM
+  workflow_dispatch: {}
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: date test
+        shell: bash
+        run: |
+          echo "test $date"
