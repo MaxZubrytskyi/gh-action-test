@@ -1,16 +1,13 @@
----
 name: "Release: Schedule"
 
 concurrency:
   group: container-release
   cancel-in-progress: false
 
-
 on:
   schedule:
-    - cron: '*/10 * * * *'  # Runs every day at 8 AM
+    - cron: '*/1 * * * *'  # Runs every 10 minutes
   workflow_dispatch: {}
-
 
 jobs:
   test:
@@ -19,4 +16,5 @@ jobs:
       - name: date test
         shell: bash
         run: |
+          date=$(date)
           echo "test $date"
